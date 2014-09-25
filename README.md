@@ -7,7 +7,7 @@ It picks your IP randomly from a serverlist to minimize request overhead on a si
 
 If you want to add or remove your server from the list contact me on github
 
-Copyright © 2014 phoemur@gmail.com
+Copyright Â© 2014 phoemur@gmail.com
 This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
@@ -36,7 +36,7 @@ Or download the tarball or git clone the repository and then:
 
     # python setup.py install
 
-ChangeLog
+ChangeLogz
 =========
 
 0.5.2 (2014-08-12)
