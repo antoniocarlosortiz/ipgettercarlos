@@ -1,88 +1,59 @@
 #!/usr/bin/env python
-"""
-This module is designed to fetch your external IP address from the internet.
-It is used mostly when behind a NAT.
-It picks your IP randomly from a serverlist to minimize request
-overhead on a single server
-
-If you want to add or remove your server from the list contact me on github
-
-
-API Usage
-=========
-
-    >>> import ipgetter
-    >>> myip = ipgetter.myip()
-    >>> myip
-    '8.8.8.8'
-
-    >>> ipgetter.IPgetter().test()
-
-    Number of servers: 47
-    IP's :
-    8.8.8.8 = 47 ocurrencies
-
-
-Copyright © 2014 phoemur@gmail.com
-This work is free. You can redistribute it and/or modify it under the
-terms of the Do What The Fuck You Want To Public License, Version 2,
-as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
-"""
-
 import re
 import random
 import signal
+import urllib
+import urllib2
+import requests
 
-from sys import version_info
+#version tells the current version of python
+from sys import	version_info
+from pprint import pprint
 from functools import wraps
 
-PY3K = version_info >= (3, 0)
+PY3K = version_info
 
-if PY3K:
-    import urllib.request as urllib
-else:
-    import urllib2 as urllib
-
+#just a variable with underlines
 __version__ = "0.5.2"
 
+def timeout(seconds, error_message = "Function call timed out"):
+	'''
+	Decorator that provides timeout to a Function
+	'''
+	def decorated(func):
+		def __handle_timeout(signum, frame):
+			print 'signal handler called with signal', signum
+			#raise to explicitly call errors
+			raise TimeoutError(error_message)
+			print "Timeout! Timeout!"
 
-def timeout(seconds, error_message='Function call timed out'):
-    '''
-    Decorator that provides timeout to a function
-    '''
-    def decorated(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError(error_message)
-
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-        return wrapper
-    return decorated
-
+		@wraps(func)
+		def wrapper(*args, **kwargs):
+			signal.signal(signal.SIGALRM, __handle_timeout)
+			signal.alarm(seconds)
+			try:
+				result = func(*args, **kwargs)
+			finally:
+				signal.alarm(0)
+			return result
+		return wrapper
+	return decorated
 
 @timeout(120)
 def myip():
-    return IPgetter().get_externalip()
-
+	return IPgetter().get_externalip()
 
 class IPgetter(object):
 
-    '''
-    This class is designed to fetch your external IP address from the internet.
-    It is used mostly when behind a NAT.
-    It picks your IP randomly from a serverlist to minimize request overhead
-    on a single server
-    '''
+	'''
+	This class is designed to fetch your external IP address from the internet.
+	It is used mostly when behind a NAT.
+	It picks your IP ran randomly from a serverlist to minimize request overhead
+	on a single server
+	'''
 
-    def __init__(self):
-        self.server_list = ['http://ip.dnsexit.com',
+	def __init__(self):
+		self.server_list = ['http://ip.dnsexit.com',
                             'http://ifconfig.me/ip',
                             'http://ipecho.net/plain',
                             'http://checkip.dyndns.org/plain',
@@ -127,72 +98,98 @@ class IPgetter(object):
                             'http://wtfismyip.com/',
                             'http://ipinfo.io/',
                             'http://httpbin.org/ip']
+	
+	def get_externalip(self):
+		'''
+		This function gets your IP from a random server
+		'''
 
-    def get_externalip(self):
-        '''
-        This function gets your IP from a random server
-        '''
+		random.shuffle(self.server_list)
+		myip = ''
+		for server in self.server_list:
+			myip = self.fetch(server)
+			if myip != '':
+				return myip
+			else:
+				continue
+		return ''
 
-        random.shuffle(self.server_list)
-        myip = ''
-        for server in self.server_list:
-            myip = self.fetch(server)
-            if myip != '':
-                return myip
-            else:
-                continue
-        return ''
 
-    def fetch(self, server):
-        '''
-        This function gets your IP from a specific server
-        '''
-        url = None
-        opener = urllib.build_opener()
-        opener.addheaders = [('User-agent',
-                              "Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0")]
+	def fetch(self, server):
+		'''
+		This function gets your IP from a specific server
+		'''
+		
+		user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36"
+		headers = { "User-Agent" : user_agent}
+        
+#		url = None
+#		opener = urllib.build_opener()
+#		opener.addheaders = [('User-agent', "Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0")]
+		
+		try:
 
-        try:
-            url = opener.open(server)
-            content = url.read()
+			r = requests.get(server, headers = headers)
+			content = r.content
 
-            # Didn't want to import chardet. Prefered to stick to stdlib
-            if PY3K:
-                try:
-                    content = content.decode('UTF-8')
-                except UnicodeDecodeError:
-                    content = content.decode('ISO-8859-1')
+#			url = opener.open(server)
+#			content = url.read()
+			
+			#Didn't want to import chardet. Preferred to stick with stdlib
+			if PY3K:
+				try:
+					content = content.decode('UTF-8')
+				except UnicodeDecodeError:
+					content = content.decode('ISO-8859-1')
+			m = re.findall(r'[0-9]+(?:\.[0-9]+){3}', content)		
+#			m = re.findall('(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',content) 
+			myip = m[0]
+			return myip if len(myip) > 0 else ''
+	
+		except Exception:
+			return ''
 
-            m = re.search(
-                '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',
-                content)
-            myip = m.group(0)
-            return myip if len(myip) > 0 else ''
-        except Exception:
-            return ''
-        finally:
-            if url:
-                url.close()
+#		finally:
+#			if url:
+#				url.close()
+	@timeout(5)
+	def test(self):
+		'''
+		This functions tests the consistency of the servers
+		on the list when retrieving your IP.
+		All results should be the same
+		'''
+		resultdict = {}
+		for server in self.server_list:
+			print "checking %s" % server
+			resultdict.update(**{server: self.fetch(server)})
 
-    def test(self):
-        '''
-        This functions tests the consistency of the servers
-        on the list when retrieving your IP.
-        All results should be the same.
-        '''
 
-        resultdict = {}
-        for server in self.server_list:
-            resultdict.update(**{server: self.fetch(server)})
+		ips = sorted(resultdict.values())
+		ips_set = set(ips)
+		print '\nNumber of servers: {}'.format(len(self.server_list))
+		print "IP's :"
 
-        ips = sorted(resultdict.values())
-        ips_set = set(ips)
-        print('\nNumber of servers: {}'.format(len(self.server_list)))
-        print("IP's :")
-        for ip, ocorrencia in zip(ips_set, map(lambda x: ips.count(x), ips_set)):
-            print('{0} = {1} ocurrenc{2}'.format(ip if len(ip) > 0 else 'broken server', ocorrencia, 'y' if ocorrencia == 1 else 'ies'))
-        print('\n')
-        print(resultdict)
+		#lambda x: ips.count(x)
+		def a(x):
+			return ips.count(x)
+
+		#map(lambda x: ips.count(x), ips_set)
+		b = [a(x) for x in ips_set]
+
+		#zip(ips_set, map(lambda x: ips.count(x), ips_set))
+		#zip(ips_set, b)
+
+		for ip, ocorrencia in zip(ips_set, map(lambda x: ips.count(x), ips_set)):
+			print '{0} = {1} occurrenc{2}'.format(ip if len(ip) > 0 else 'broken server', ocorrencia, 'e' if ocorrencia == 1 else 'es')
+
+		print ""
+		pprint(resultdict)
 
 if __name__ == '__main__':
-    print(myip())
+#	test = IPgetter()
+#	test.test()
+#	print test.fetch('http://www.whatsmyip.org/')
+#	print test.fetch('https://www.google.com.ph/search?q=whats+my+ip&oq=whats&aqs=chrome.1.69i57j0j69i59j69i65l2j69i60.2291j0j7&sourceid=chrome&es_sm=93&ie=UTF-8')
+
+	print myip()
