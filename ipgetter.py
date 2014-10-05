@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#https://github.com/phoemur/ipgetter/blob/master/ipgetter.py
+
 import re
 import random
 import signal
@@ -39,9 +40,13 @@ def timeout(seconds, error_message = "Function call timed out"):
 		return wrapper
 	return decorated
 
-@timeout(120)
+@timeout(10)
 def myip():
 	return IPgetter().get_externalip()
+
+@timeout(10)
+def myiptestaccuracy():
+	return IPgetter().test()
 
 class IPgetter(object):
 
@@ -152,7 +157,7 @@ class IPgetter(object):
 #		finally:
 #			if url:
 #				url.close()
-	@timeout(5)
+
 	def test(self):
 		'''
 		This functions tests the consistency of the servers
@@ -180,15 +185,15 @@ class IPgetter(object):
 		#zip(ips_set, map(lambda x: ips.count(x), ips_set))
 		#zip(ips_set, b)
 
-		for ip, ocorrencia in zip(ips_set, map(lambda x: ips.count(x), ips_set)):
+		for ip, ocorrencia in zip(ips_set, b):
 			print '{0} = {1} occurrenc{2}'.format(ip if len(ip) > 0 else 'broken server', ocorrencia, 'e' if ocorrencia == 1 else 'es')
 
 		print ""
 		pprint(resultdict)
 
 if __name__ == '__main__':
-#	test = IPgetter()
-#	test.test()
+	test = IPgetter()
+	test.test()
 #	print test.fetch('http://www.whatsmyip.org/')
 #	print test.fetch('https://www.google.com.ph/search?q=whats+my+ip&oq=whats&aqs=chrome.1.69i57j0j69i59j69i65l2j69i60.2291j0j7&sourceid=chrome&es_sm=93&ie=UTF-8')
 
