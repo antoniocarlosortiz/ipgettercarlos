@@ -1,3 +1,6 @@
+ipgettercarlos
+=========
+
 About
 =========
 
@@ -12,47 +15,34 @@ This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 
+Im not Sam Hocevar but I edited it a bit to make it work universally i think or just for my set up.
 
 API Usage
-=========
 
     >>> import ipgetter
     >>> myip = ipgetter.myip()
     >>> myip
        '8.8.8.8'
+    >>> myip = ipgetter.myiptest()
+    	#will print out a lot of things that tests serverlist
 
-Shell Usage
-===========
 
-    $ python -m ipgetter    
-    '8.8.8.8'
-
-Installation
-============
-
-    # pip install ipgetter
-
-Or download the tarball or git clone the repository and then:
-
-    # python setup.py install
-
-ChangeLogz
+SHELL Usage
 =========
 
-0.5.2 (2014-08-12)
- * Fix servers (current 42 servers)
- * License
+no support lol
 
-0.4 (2014-03-01)
- * Serverlist = 44 servers
- * Added timeout for getting the IP
+Installation
+=========
 
-0.3.2 (2014-03-01)
- * Fix distutils issues
+	# pip install ipgettercarlos
 
-0.2 (2014-03-01)
- * Fix python 2 backwards compatibility
+Or download the tarball (not yet ported to git):
+	
+	#python setup.py install
 
-0.1 (2014-02-28)
- * You can retrieve your IP.
- * Serverlist = 16 servers
+Changelog
+=========
+
+0.1 (2014-09-29)
+ * changed urllib dependancy to request
