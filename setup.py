@@ -1,29 +1,28 @@
-from distutils.core import setup
-            
-setup(
-    name='ipgetter',
-    version='0.5.2',
-    author='Fernando Giannasi <phoemur@gmail.com>',
-    url='https://github.com/phoemur/ipgetter',
-    download_url = 'https://github.com/phoemur/ipgetter/tarball/0.5.2',
+from setuptools import setup
 
-    description="Utility to fetch your external IP address",
-    license="WTFPL",
-    classifiers=[
-        'Environment :: Console',
-        'License :: Public Domain',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: System :: Networking',
-        'Topic :: Utilities',
-    ],
+def readme():
+	with open('README.rst') as f:
+		return f.read()
 
-    py_modules=['ipgetter'],
 
-    long_description='''This module is designed to fetch your external IP address from the internet. It is used mostly when behind a NAT. It picks your IP 
-randomly from a serverlist to minimize request overhead on a single server
-
-If you want to add or remove your server from the list contact me on github''',
-)
+setup(	name = 'ipgettercarlos',
+		version = 	'0.1',
+		description = 'a copy of ipgetter made by phoemur which basically does what the name says but improved to work',
+		long_description = 'The same as the short descript',
+		classifiers = [
+			'Development Status :: 3 - Alpha',
+			'License :: OSI Approved :: MIT License',
+			'Programming Language :: Python :: 2.7',
+			'Operating System :: OS Dependent',
+			'Topic :: Software Development :: Libraries :: Python Modules',
+			'Topic :: System :: Networking',
+			'Topic :: Utilities',
+			'Environment :: Console',
+			],
+		keywords = 'ip getter tpain hiphop drake my anaconda dont want none',
+		url = '',
+		author = 'Antonio Carlos L. Ortiz',
+		author_email = 'ortizantoniocarlos@gmail.com',
+		license = 'MIT',
+		packages = ['ipgettercarlos'],
+		zip_safe = False)
