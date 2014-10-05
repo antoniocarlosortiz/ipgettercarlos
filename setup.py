@@ -9,6 +9,7 @@ setup(	name = 'ipgettercarlos',
 		version = 	'0.1',
 		description = 'a copy of ipgetter made by phoemur which basically does what the name says but improved to work',
 		long_description = 'The same as the short descript',
+		license = 'WTFPL',
 		classifiers = [
 			'Development Status :: 3 - Alpha',
 			'License :: Public Domain',
