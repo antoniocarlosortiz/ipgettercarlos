@@ -37,7 +37,7 @@ Installation
 
 	# pip install ipgettercarlos
 
-Or download the tarball (not yet ported to git):
+Or download the tarball:
 	
 	#python setup.py install
 
