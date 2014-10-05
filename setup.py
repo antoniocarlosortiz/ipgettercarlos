@@ -11,7 +11,7 @@ setup(	name = 'ipgettercarlos',
 		long_description = 'The same as the short descript',
 		classifiers = [
 			'Development Status :: 3 - Alpha',
-			'License :: OSI Approved :: MIT License',
+			'License :: Public Domain',
 			'Programming Language :: Python :: 2.7',
 			'Operating System :: OS Dependent',
 			'Topic :: Software Development :: Libraries :: Python Modules',
