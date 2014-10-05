@@ -3,7 +3,7 @@ ipgettercarlos
 
 About
 =========
-
+Still has no Python 3 support.
 This module is designed to fetch your external IP address from the internet.
 It is used mostly when behind a NAT.
 It picks your IP randomly from a serverlist to minimize request overhead on a single server
